@@ -48,10 +48,7 @@ public class XY_Console {
 
     public static boolean emptyField(String[][] map, int x, int y) {
         if (x > 0 && x < map.length && y > 0 && y < map.length) {
-            if (map[x][y] == EMPTY_VOID) return true;
-            else {
-                return false;
-            }
+            return map[x][y].equals(EMPTY_VOID);
         } else {
             return false;
         }
@@ -186,14 +183,11 @@ public class XY_Console {
         int count_a = 0, count_b = 0;
         for (int i = 1; i < map.length; i++) {
             for (int j = 1; j < map.length; j++) {
-                if (i - j == 0 && map[i][j] == markPlayer) count_a++;
-                if (i + j == map.length && map[i][j] == markPlayer) count_b++;
+                if (i - j == 0 && map[i][j].equals(markPlayer)) count_a++;
+                if (i + j == map.length && map[i][j].equals(markPlayer)) count_b++;
             }
         }
-        if (count_a == 3 || count_b == 3) return true;
-
-
-        return false;
+        return count_a == 3 || count_b == 3;
 
 
     }
