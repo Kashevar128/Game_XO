@@ -1,17 +1,18 @@
+import javax.swing.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class XY_Console {
-
-    //реализовать метод выигрышных комбинаций и метод ничьи с помощью флагов или равенства
-    //соседних ячеек + сделать обход ошибки неправильных форматов данных (через сканер внутри catch и
-    // оператор contine)
     final private static int size = 3;
     final public static String EMPTY_VOID = "_";
     final public static String DOT_X = "X";
     final public static String DOT_O = "O";
     final public static String USER_PLAYER = "ИГРОК";
     final public static String AI_PLAYER = "КОМПЬЮТЕР";
+
+    public static int getSize() {
+        return size;
+    }
 
     public static String[][] initializingTheMap(int size) {
         size++;
