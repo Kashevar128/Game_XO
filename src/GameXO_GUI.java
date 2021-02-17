@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class GameXO_GUI extends JFrame {
     final private static String empty = "_";
@@ -11,7 +8,7 @@ public class GameXO_GUI extends JFrame {
     final private static String dot_0 = "O";
 
     private JButton[][] map;
-    private String[][] mapStr;
+    private static String[][] mapStr;
     private final ImageIcon DOT_X = new ImageIcon("src/res/X.jpg");
     private final ImageIcon DOT_O = new ImageIcon("src/res/O.jpg");
     private final ImageIcon EMPTY = new ImageIcon("src/res/Empty.jpg");
@@ -48,15 +45,16 @@ public class GameXO_GUI extends JFrame {
                 JButton tmp = map[i][j];
                 int x = i;
                 int y = j;
+                String[][] oldMapStr = mapStr.clone();
                 tmp.addActionListener(actionEvent -> {
                     tmp.setEnabled(false);
                     tmp.setDisabledIcon(DOT_X);
                     mapStr[x][y] = dot_x;
-//                    try {
-//                        int[] arr = comparison( turnAi(mapStr), mapStr);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        map = comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                     for (int k = 0; k < 3; k++) {
                         System.out.println();
@@ -64,7 +62,6 @@ public class GameXO_GUI extends JFrame {
                             System.out.print(mapStr[k][l]);
                         }
                     }
-
 
                 });
                 panel.add(map[i][j]);
@@ -86,21 +83,24 @@ public class GameXO_GUI extends JFrame {
         setVisible(true);
     }
 
-//    public static int[] comparison(String[][]newMapStr, String[][]mapStr) {
-//        for (int i = 0; i < mapStr.length; i++) {
-//            for (int j = 0; j < mapStr.length; j++) {
-//                if(!newMapStr[i][j].equals(mapStr[i][j])) {
-//                    return new int[] {i, j};
-//                }
-//            }
-//        }
-//    }
+    public static JButton[][] comparison(String[][] newMapStr, String[][] mapStr, JButton[][] map, ImageIcon icon) {
+        for (int i = 0; i < mapStr.length; i++) {
+            for (int j = 0; j < mapStr.length; j++) {
+                if (!newMapStr[i][j].equals(mapStr[i][j])) {
+                    map[2][2].setEnabled(false);
+                    map[2][2].setDisabledIcon(icon);
+                    return map;
+                }
+            }
+        }
+        return map;
+    }
 
     public static String[][] initializingTheMap(int size) {
         String[][] map = new String[size][size];
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map.length; j++) {
-                map[i][j] = empty;
+                map[i][j] = "_";
             }
         }
         return map;
@@ -151,10 +151,6 @@ public class GameXO_GUI extends JFrame {
     }
 
     public static String[][] turnAi(String[][] map) throws InterruptedException {
-        System.out.println();
-        Thread.sleep(1000);
-        System.out.println("Ход компьютера");
-        Thread.sleep(2000);
 
         boolean flag = false;
 
@@ -198,7 +194,12 @@ public class GameXO_GUI extends JFrame {
                 }
             }
         }
-
+        for (int k = 0; k < 3; k++) {
+            System.out.println();
+            for (int l = 0; l < 3; l++) {
+                System.out.print(map[k][l]);
+            }
+        }
         return map;
     }
 
