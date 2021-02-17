@@ -37,6 +37,7 @@ public class GameXO_GUI extends JFrame {
     private JPanel getMap() throws InterruptedException {
         map = new JButton[3][3];
         mapStr = initializingTheMap(3);
+        String[][] oldMapStr = new String[3][3];
         JPanel panel = new JPanel(new GridLayout(3, 3));
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -45,22 +46,15 @@ public class GameXO_GUI extends JFrame {
                 JButton tmp = map[i][j];
                 int x = i;
                 int y = j;
-                String[][] oldMapStr = mapStr.clone();
                 tmp.addActionListener(actionEvent -> {
                     tmp.setEnabled(false);
                     tmp.setDisabledIcon(DOT_X);
                     mapStr[x][y] = dot_x;
+                    arrayCopy(oldMapStr, mapStr);
                     try {
-                        map = comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
-                    } catch (InterruptedException e) {
+                        comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
+                    } catch (Exception e) {
                         e.printStackTrace();
-                    }
-
-                    for (int k = 0; k < 3; k++) {
-                        System.out.println();
-                        for (int l = 0; l < 3; l++) {
-                            System.out.print(mapStr[k][l]);
-                        }
                     }
 
                 });
@@ -83,17 +77,25 @@ public class GameXO_GUI extends JFrame {
         setVisible(true);
     }
 
-    public static JButton[][] comparison(String[][] newMapStr, String[][] mapStr, JButton[][] map, ImageIcon icon) {
+    public static void comparison(String[][] newMapStr, String[][] mapStr, JButton[][] map, ImageIcon icon) {
+
         for (int i = 0; i < mapStr.length; i++) {
             for (int j = 0; j < mapStr.length; j++) {
                 if (!newMapStr[i][j].equals(mapStr[i][j])) {
-                    map[2][2].setEnabled(false);
-                    map[2][2].setDisabledIcon(icon);
-                    return map;
+                    map[i][j].setEnabled(false);
+                    map[i][j].setDisabledIcon(icon);
                 }
             }
         }
-        return map;
+    }
+
+    public static String[][] arrayCopy(String[][] arr, String[][] arr1) {
+        for (int k = 0; k < mapStr.length; k++) {
+            for (int l = 0; l < mapStr.length; l++) {
+                arr[k][l] = arr1[k][l];
+            }
+        }
+        return arr;
     }
 
     public static String[][] initializingTheMap(int size) {
@@ -150,8 +152,7 @@ public class GameXO_GUI extends JFrame {
         return count_a == 3 || count_b == 3;
     }
 
-    public static String[][] turnAi(String[][] map) throws InterruptedException {
-
+    public static String[][] turnAi(String[][] map) {
         boolean flag = false;
 
         label:
@@ -192,12 +193,6 @@ public class GameXO_GUI extends JFrame {
                     map[x][y] = dot_0;
                     flag2 = true;
                 }
-            }
-        }
-        for (int k = 0; k < 3; k++) {
-            System.out.println();
-            for (int l = 0; l < 3; l++) {
-                System.out.print(map[k][l]);
             }
         }
         return map;
