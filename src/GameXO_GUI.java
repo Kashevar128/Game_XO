@@ -6,6 +6,8 @@ public class GameXO_GUI extends JFrame {
     final private static String empty = "_";
     final private static String dot_x = "X";
     final private static String dot_0 = "O";
+    final private static String user = "ИГРОК";
+    final private static String computer = "Компьютер";
 
     private JButton[][] map;
     private static String[][] mapStr;
@@ -34,7 +36,7 @@ public class GameXO_GUI extends JFrame {
         return file;
     }
 
-    private JPanel getMap() throws InterruptedException {
+    private JPanel getMap() {
         map = new JButton[3][3];
         mapStr = initializingTheMap(3);
         String[][] oldMapStr = new String[3][3];
@@ -50,7 +52,11 @@ public class GameXO_GUI extends JFrame {
                     tmp.setEnabled(false);
                     tmp.setDisabledIcon(DOT_X);
                     mapStr[x][y] = dot_x;
+                    frameWin(user);
+                    setEnabled(false);
                     arrayCopy(oldMapStr, mapStr);
+                    if (victoryCondition(mapStr, dot_x)) {
+                    }
                     try {
                         comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
                     } catch (Exception e) {
@@ -87,6 +93,27 @@ public class GameXO_GUI extends JFrame {
                 }
             }
         }
+    }
+
+    public static void frameWin(String name) {
+        JFrame jfrm = new JFrame();
+        JPanel panel = new JPanel();
+        jfrm.setSize(400, 130);
+        jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JLabel jLab = new JLabel(name + " ПОБЕДИЛ!!!");
+        jLab.setFont(new Font("Arial", Font.BOLD,30));
+        JButton button1 = new JButton("Новая игра");
+        JButton button2 = new JButton("Выйти из игры");
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panel.add(jLab);
+        panel.add(button1);
+        panel.add(button2);
+        jfrm.add(panel);
+        jfrm.setAlwaysOnTop(true);
+        jfrm.setLocationRelativeTo(null);
+        jfrm.setResizable(false);
+        jfrm.setVisible(true);
+
     }
 
     public static String[][] arrayCopy(String[][] arr, String[][] arr1) {
@@ -200,6 +227,6 @@ public class GameXO_GUI extends JFrame {
 
 
     public static void main(String[] args) throws InterruptedException {
-        new GameXO_GUI("Крестики - нолики");
+         new GameXO_GUI("Крестики - нолики");
     }
 }
