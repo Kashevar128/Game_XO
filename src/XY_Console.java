@@ -147,11 +147,10 @@ public class XY_Console {
         int count_c = 0;
         for (int i = 1; i < map.length; i++) {
             for (int j = 1; j < map.length; j++) {
-                if (map[i][j] != EMPTY_VOID) count_c++;
+                if (!map[i][j].equals(EMPTY_VOID)) count_c++;
             }
         }
-        if (count_c == (size * size)) return true;
-        return false;
+        return count_c == (size * size);
     }
 
     public static boolean victoryCondition(String[][] map, String markPlayer) {
@@ -159,7 +158,7 @@ public class XY_Console {
         for (int i = 1; i < map.length; i++) {
             int count_x = 0;
             for (int j = 1; j < map.length; j++) {
-                if (map[i][j] == markPlayer) count_x++;
+                if (map[i][j].equals(markPlayer)) count_x++;
                 if (count_x == 3) {
                     return true;
                 }
@@ -171,7 +170,7 @@ public class XY_Console {
             int count_y = 0;
             for (int i = 1; i < map.length; i++) {
                 for (int j = loopCounter; j <= loopCounter; j++) {
-                    if (map[i][j] == markPlayer) count_y++;
+                    if (map[i][j].equals(markPlayer)) count_y++;
                     if (count_y == 3) {
                         return true;
                     }

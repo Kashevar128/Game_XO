@@ -8,6 +8,8 @@ public class GameXO_GUI extends JFrame {
     final private static String dot_0 = "O";
     final private static String user = "ИГРОК";
     final private static String computer = "Компьютер";
+    final private static String massageWin = " ПОБЕДИЛ!!!";
+    final private static String massageDraw = "НИЧЬЯ))";
 
     private JButton[][] map;
     private static String[][] mapStr;
@@ -52,15 +54,32 @@ public class GameXO_GUI extends JFrame {
                     tmp.setEnabled(false);
                     tmp.setDisabledIcon(DOT_X);
                     mapStr[x][y] = dot_x;
-                    frameWin(user);
-                    setEnabled(false);
-                    arrayCopy(oldMapStr, mapStr);
-                    if (victoryCondition(mapStr, dot_x)) {
+                    if (!overflow(mapStr)) {
+                        if (victoryCondition(mapStr, dot_x)) {
+                            frameDialog(user, massageWin);
+                            setEnabled(false);
+                            return;
+                        }
+                    } else {
+                        frameDialog(" ", massageDraw);
+                        setEnabled(false);
+                        return;
                     }
+
+                    arrayCopy(oldMapStr, mapStr);
                     try {
                         comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+                    if (!overflow(mapStr)) {
+                        if (victoryCondition(mapStr, dot_0)) {
+                            frameDialog(computer, massageWin);
+                            setEnabled(false);
+                        }
+                    } else {
+                        frameDialog(" ", massageDraw);
+                        setEnabled(false);
                     }
 
                 });
@@ -95,13 +114,13 @@ public class GameXO_GUI extends JFrame {
         }
     }
 
-    public static void frameWin(String name) {
+    public static void frameDialog(String name, String msg) {
         JFrame jfrm = new JFrame();
         JPanel panel = new JPanel();
         jfrm.setSize(400, 130);
         jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel jLab = new JLabel(name + " ПОБЕДИЛ!!!");
-        jLab.setFont(new Font("Arial", Font.BOLD,30));
+        JLabel jLab = new JLabel(name + msg);
+        jLab.setFont(new Font("Arial", Font.BOLD, 30));
         JButton button1 = new JButton("Новая игра");
         JButton button2 = new JButton("Выйти из игры");
         panel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -135,14 +154,6 @@ public class GameXO_GUI extends JFrame {
         return map;
     }
 
-    public static boolean emptyField(String[][] map, int x, int y) {
-        if (x >= 0 && x < map.length && y >= 0 && y < map.length) {
-            return map[x][y].equals(empty);
-        } else {
-            return false;
-        }
-    }
-
     public static boolean victoryCondition(String[][] map, String markPlayer) {
 
         for (String[] strings : map) {
@@ -170,13 +181,23 @@ public class GameXO_GUI extends JFrame {
         }
 
         int count_a = 0, count_b = 0;
-        for (int i = 1; i < map.length; i++) {
-            for (int j = 1; j < map.length; j++) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map.length; j++) {
                 if (i - j == 0 && map[i][j].equals(markPlayer)) count_a++;
-                if (i + j == map.length && map[i][j].equals(markPlayer)) count_b++;
+                if (i + j == map.length - 1 && map[i][j].equals(markPlayer)) count_b++;
             }
         }
         return count_a == 3 || count_b == 3;
+    }
+
+    public static boolean overflow(String[][] map) {
+        int count_c = 0;
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map.length; j++) {
+                if (!map[i][j].equals(empty)) count_c++;
+            }
+        }
+        return count_c == (map.length * map.length);
     }
 
     public static String[][] turnAi(String[][] map) {
@@ -225,8 +246,12 @@ public class GameXO_GUI extends JFrame {
         return map;
     }
 
+    public static boolean emptyField(String[][] map, int x, int y) {
+        return map[x][y].equals(empty);
+    }
+
 
     public static void main(String[] args) throws InterruptedException {
-         new GameXO_GUI("Крестики - нолики");
+        new GameXO_GUI("Крестики - нолики");
     }
 }
