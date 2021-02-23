@@ -1,8 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
+import static java.awt.Toolkit.getDefaultToolkit;
+
 public class GameXO_GUI extends JFrame {
+
     final private static String empty = "_";
     final private static String dot_x = "X";
     final private static String dot_0 = "O";
@@ -10,6 +15,9 @@ public class GameXO_GUI extends JFrame {
     final private static String computer = "Компьютер";
     final private static String massageWin = " ПОБЕДИЛ!!!";
     final private static String massageDraw = "НИЧЬЯ))";
+    final private static String emptyNew = "Empty";
+    final private static String dot_xNew = "X";
+    final private static String dot_0New = "O";
 
     private JButton[][] map;
     private static String[][] mapStr;
@@ -23,11 +31,11 @@ public class GameXO_GUI extends JFrame {
         JMenuItem exit = new JMenuItem("Выход");
         open.addActionListener(actionEvent -> {
             try {
+                dispose();
                 new GameXO_GUI("Крестики - нолики");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            dispose();
         });
         exit.addActionListener(actionEvent -> {
             dispose();
@@ -43,10 +51,26 @@ public class GameXO_GUI extends JFrame {
         mapStr = initializingTheMap(3);
         String[][] oldMapStr = new String[3][3];
         JPanel panel = new JPanel(new GridLayout(3, 3));
+        int[] compare = new int[0];
+        int rnd = (int) (Math.random() * 2);
+        if (rnd == 1) {
+            arrayCopy(oldMapStr, mapStr);
+            try {
+                compare = comparison(turnAi(mapStr), oldMapStr, map, DOT_O);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 map[i][j] = new JButton();
-                map[i][j].setIcon(EMPTY);
+                if (rnd == 1 && compare[0] == i && compare[1] == j) {
+                    map[i][j].setEnabled(false);
+                    map[i][j].setDisabledIcon(DOT_O);
+                    map[i][j].setIcon(DOT_O);
+                } else {
+                    map[i][j].setIcon(EMPTY);
+                }
                 JButton tmp = map[i][j];
                 int x = i;
                 int y = j;
@@ -102,23 +126,27 @@ public class GameXO_GUI extends JFrame {
         setVisible(true);
     }
 
-    public static void comparison(String[][] newMapStr, String[][] mapStr, JButton[][] map, ImageIcon icon) {
-
+    public static int[] comparison(String[][] newMapStr, String[][] mapStr, JButton[][] map, ImageIcon icon) {
         for (int i = 0; i < mapStr.length; i++) {
             for (int j = 0; j < mapStr.length; j++) {
                 if (!newMapStr[i][j].equals(mapStr[i][j])) {
-                    map[i][j].setEnabled(false);
-                    map[i][j].setDisabledIcon(icon);
+                    try {
+                        map[i][j].setEnabled(false);
+                        map[i][j].setDisabledIcon(icon);
+                    } catch (NullPointerException e) {
+                        return new int[]{i, j};
+                    }
                 }
             }
         }
+        return new int[]{};
     }
 
-    public static void frameDialog(String name, String msg) {
-        JFrame jfrm = new JFrame();
+    public void frameDialog(String name, String msg) {
+        JFrame jfrmDialog = new JFrame();
         JPanel panel = new JPanel();
-        jfrm.setSize(400, 130);
-        jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jfrmDialog.setSize(400, 130);
+        jfrmDialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel jLab = new JLabel(name + msg);
         jLab.setFont(new Font("Arial", Font.BOLD, 30));
         JButton button1 = new JButton("Новая игра");
@@ -127,12 +155,25 @@ public class GameXO_GUI extends JFrame {
         panel.add(jLab);
         panel.add(button1);
         panel.add(button2);
-        jfrm.add(panel);
-        jfrm.setAlwaysOnTop(true);
-        jfrm.setLocationRelativeTo(null);
-        jfrm.setResizable(false);
-        jfrm.setVisible(true);
+        jfrmDialog.add(panel);
+        jfrmDialog.setAlwaysOnTop(true);
+        jfrmDialog.setLocationRelativeTo(null);
+        jfrmDialog.setResizable(false);
+        jfrmDialog.setVisible(true);
+        button1.addActionListener(actionEvent -> {
+            jfrmDialog.dispose();
+            dispose();
+            try {
+                new GameXO_GUI("Крестики - нолики");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+        });
+        button2.addActionListener(actionEvent -> {
+            jfrmDialog.dispose();
+            dispose();
+        });
     }
 
     public static String[][] arrayCopy(String[][] arr, String[][] arr1) {
@@ -250,6 +291,14 @@ public class GameXO_GUI extends JFrame {
         return map[x][y].equals(empty);
     }
 
+    private static ImageIcon loadImage(String imageName) {
+        ImageIcon imageIcon = null;
+
+        try {
+            imageIcon = ImageIcon.class.getResource("src/res/" + imageName);
+            creatImage
+        }
+    }
 
     public static void main(String[] args) throws InterruptedException {
         new GameXO_GUI("Крестики - нолики");
