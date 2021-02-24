@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import static java.awt.Toolkit.getDefaultToolkit;
@@ -15,15 +17,14 @@ public class GameXO_GUI extends JFrame {
     final private static String computer = "Компьютер";
     final private static String massageWin = " ПОБЕДИЛ!!!";
     final private static String massageDraw = "НИЧЬЯ))";
-    final private static String emptyNew = "Empty";
-    final private static String dot_xNew = "X";
-    final private static String dot_0New = "O";
 
     private JButton[][] map;
     private static String[][] mapStr;
-    private final ImageIcon DOT_X = new ImageIcon("src/res/X.jpg");
-    private final ImageIcon DOT_O = new ImageIcon("src/res/O.jpg");
-    private final ImageIcon EMPTY = new ImageIcon("src/res/Empty.jpg");
+    ClassLoader cl = this.getClass().getClassLoader();
+    private final ImageIcon DOT_X = new ImageIcon(cl.getResource("X.jpg"));
+    private final ImageIcon DOT_O = new ImageIcon(cl.getResource("O.jpg"));
+    private final ImageIcon EMPTY = new ImageIcon(cl.getResource("Empty.jpg"));
+
 
     private JMenu createFileMenu() {
         JMenu file = new JMenu("Файл");
@@ -289,15 +290,6 @@ public class GameXO_GUI extends JFrame {
 
     public static boolean emptyField(String[][] map, int x, int y) {
         return map[x][y].equals(empty);
-    }
-
-    private static ImageIcon loadImage(String imageName) {
-        ImageIcon imageIcon = null;
-
-        try {
-            imageIcon = ImageIcon.class.getResource("src/res/" + imageName);
-            creatImage
-        }
     }
 
     public static void main(String[] args) throws InterruptedException {
